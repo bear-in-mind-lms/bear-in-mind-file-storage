@@ -1,0 +1,78 @@
+openapi: 3.0.1
+
+info:
+  title: OpenAPI SSDK
+  description: Common items to use in schemas.
+  version: 0.0.1
+
+paths: {}
+
+components:
+  # ------------------------------------------------
+  # Common responses
+  # ------------------------------------------------
+  responses:
+    BadRequest400:
+      description: If one or more request parameters don't comply with the specification
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/error.yaml'
+          example:
+            $ref: 'examples/bad-request-validation-error.json'
+    Unauthorized401:
+      description: If the authentication credentials provided are invalid
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/error.yaml'
+          example:
+            $ref: 'examples/unauthorized-error.json'
+    Forbidden403:
+      description: If the current user doesn't have sufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/error.yaml'
+          example:
+            $ref: 'examples/forbidden-error.json'
+    NotFound404:
+      description: Not found.
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/error.yaml'
+          example:
+            $ref: 'examples/not-found-error.json'
+    NotAcceptable406:
+      description: Not acceptable.
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/error.yaml'
+          example:
+            $ref: 'examples/not-acceptable-error.json'
+    UnsupportedMediaType415:
+      description: Unsupported media type.
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/error.yaml'
+          example:
+            $ref: 'examples/unsupported-media-type-error.json'
+    InternalServerError500:
+      description: If a runtime error occurs while processing the request
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/error.yaml'
+          example:
+            $ref: 'examples/internal-server-error.json'
+    GatewayTimeout504:
+      description: Gateway timeout.
+      content:
+        application/json:
+          schema:
+            $ref: 'schemas/error.yaml'
+          example:
+            $ref: 'examples/gateway-timeout-error.json'

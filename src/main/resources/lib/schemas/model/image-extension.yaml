@@ -1,0 +1,7 @@
+title: ImageExtension
+type: string
+enum:
+  - .jpg
+  - .jpeg
+  - .gif
+  - .png

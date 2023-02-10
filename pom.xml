@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.kwezal.bearinmind</groupId>
+    <artifactId>bear-in-mind-file-storage</artifactId>
+    <version>0.0.1</version>
+    <name>Bear in Mind File Storage</name>
+    <description>The OpenAPI specification for file management</description>
+
+    <properties>
+        <java.version>8</java.version>
+
+        <!-- Deploy Properties -->
+        <github.global.server>github</github.global.server>
+        <repository-owner>bear-in-mind-lms</repository-owner>
+        <repository-name>bear-in-mind-file-storage</repository-name>
+        <branch-name>mvn-artifact</branch-name>
+
+        <!-- Plugin Versions -->
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-deploy-plugin.version>3.1.0</maven-deploy-plugin.version>
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+        <github-site-maven-plugin.version>0.12</github-site-maven-plugin.version>
+        <openapi-generator-maven-plugin.version>6.2.1</openapi-generator-maven-plugin.version>
+        <jackson-databind-nullable.version>0.2.4</jackson-databind-nullable.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <spring-boot-starter-web.version>2.6.5</spring-boot-starter-web.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot-starter-web.version}</version>
+        </dependency>
+
+        <!-- OPEN API -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${jackson-databind-nullable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>${openapi-generator-maven-plugin.version}</version>
+        </dependency>
+        <!-- OPEN API -->
+
+    </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/${branch-name}</url>
+        </repository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/open-api/file-storage-api.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <apiPackage>com.kwezal.bearinmind.filestorage.api</apiPackage>
+                            <modelPackage>com.kwezal.bearinmind.filestorage.model</modelPackage>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>interface</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/open-api/file-storage-api.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>com.kwezal.bearinmind.filestorage.api</apiPackage>
+                            <modelPackage>com.kwezal.bearinmind.filestorage.model</modelPackage>
+                            <library>spring-boot</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>replace-api-version</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <replace file="${project.build.directory}/classes/open-api/file-storage-api.yaml"
+                                         token="@{api-version}"
+                                         value="${project.version}"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>download-maven-metadata</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.directory}/${branch-name}/com/kwezal/bearinmind/${project.artifactId}/"/>
+                                <get src="https://github.com/${repository-owner}/${repository-name}/raw/${branch-name}/com/kwezal/bearinmind/bear-in-mind-file-storage/maven-metadata.xml"
+                                     dest="${project.build.directory}/${branch-name}/com/kwezal/bearinmind/${project.artifactId}/"
+                                     ignoreerrors="true"/>
+                                <get src="https://github.com/${repository-owner}/${repository-name}/raw/${branch-name}/com/kwezal/bearinmind/bear-in-mind-file-storage/maven-metadata.xml.md5"
+                                     dest="${project.build.directory}/${branch-name}/com/kwezal/bearinmind/${project.artifactId}/"
+                                     ignoreerrors="true"/>
+                                <get src="https://github.com/${repository-owner}/${repository-name}/raw/${branch-name}/com/kwezal/bearinmind/bear-in-mind-file-storage/maven-metadata.xml.sha1"
+                                     dest="${project.build.directory}/${branch-name}/com/kwezal/bearinmind/${project.artifactId}/"
+                                     ignoreerrors="true"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+                <configuration>
+                    <altDeploymentRepository>
+                        internal.repo::default::file://${project.build.directory}/${branch-name}
+                    </altDeploymentRepository>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>${github-site-maven-plugin.version}</version>
+                <configuration>
+                    <message>Maven artifacts for ${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    <outputDirectory>${project.build.directory}/${branch-name}</outputDirectory>
+                    <branch>refs/heads/${branch-name}</branch>
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                    <merge>true</merge>
+                    <repositoryOwner>${repository-owner}</repositoryOwner>
+                    <repositoryName>${repository-name}</repositoryName>
+                    <server>${github.global.server}</server>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,17 @@
+title: File
+type: object
+properties:
+  file:
+    description: file
+    type: string
+    format: binary
+  fileAssetType:
+    description: file asset type
+    type: string
+  identifier:
+    description: identifier
+    type: string
+required:
+  - file
+  - fileAssetType
+  - identifier

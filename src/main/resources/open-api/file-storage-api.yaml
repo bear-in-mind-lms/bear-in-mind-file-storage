@@ -1,0 +1,123 @@
+openapi: 3.0.3
+info:
+  title: Bear in Mind File Storage API
+  version: "@{api-version}"
+  description: The OpenAPI specification for file management
+servers:
+  - description: API Storage connector
+    url: 'http://localhost:8081'
+paths:
+  /file:
+    post:
+      tags:
+        - fileStorageClient
+      summary: Upload file to storage
+      operationId: upload
+      requestBody:
+        description: File request
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '../lib/schemas/model/file.yaml'
+        required: true
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: If one or more request parameters don't comply with the specification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest400'
+        '401':
+          description: If the current user provides no credentials or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized401'
+        '403':
+          description: If the current user doesn't have sufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden403'
+        '404':
+          description: Resource not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound404'
+    delete:
+      tags:
+        - fileStorageClient
+      summary: Delete file from storage
+      operationId: delete
+      parameters:
+        - name: url
+          in: query
+          schema:
+            type: string
+          description: File url
+          required: true
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: If one or more request parameters don't comply with the specification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest400'
+        '401':
+          description: If the current user provides no credentials or invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized401'
+        '403':
+          description: If the current user doesn't have sufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden403'
+        '404':
+          description: Resource not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound404'
+        '500':
+          description: If a runtime error occurs while processing the request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError500'
+              example:
+                message: Internal Server error, Please contact Administrator
+
+components:
+    schemas:
+      ImageExtension:
+        $ref: '../lib/schemas/model/image-extension.yaml'
+      ImageLimitSize:
+        $ref: '../lib/schemas/model/image-limit-size.yaml'
+      ###############################################
+      ## Generic Schemas
+      ###############################################
+      Error:
+        $ref: '../lib/schemas/error.yaml'
+      InternalServerError500:
+        $ref: '../lib/schemas/internal-server-error.yaml'
+      BadRequest400:
+        $ref: '../lib/schemas/bad-request-error.yaml'
+      Unauthorized401:
+        $ref: '../lib/schemas/unauthorized-error.yaml'
+      Forbidden403:
+        $ref: '../lib/schemas/forbidden-error.yaml'
+      NotFound404:
+        $ref: '../lib/schemas/not-found-error.yaml'
+

@@ -1,0 +1,5 @@
+title: ImageLimitSize
+type: integer
+format: int64
+enum: [ 20971520, 1572864, 524288]
+x-enum-varnames: [ LARGE, MEDIUM, SMALL ]
